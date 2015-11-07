@@ -2,8 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Localization;
 using nUpdate.UI.Popups;
@@ -13,7 +11,6 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateSearchDialog : BaseDialog
     {
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private LocalizationProperties _lp;
 
         public UpdateSearchDialog()
@@ -22,57 +19,22 @@ namespace nUpdate.UI.Dialogs
         }
 
         /// <summary>
-        ///     Sets the name of the languguage file in the resources to use, if no own file is used.
-        /// </summary>
-        public string LanguageName { get; set; }
-
-        /// <summary>
-        ///     Sets the path of the file which contains the specific language content a user added on its own.
-        /// </summary>
-        public string LanguageFilePath { get; set; }
-
-        /// <summary>
         ///     Occurs when the cancel button is clicked.
         /// </summary>
         public event EventHandler<EventArgs> CancelButtonClicked;
 
         protected virtual void OnCancelButtonClicked()
         {
-            if (CancelButtonClicked != null)
-                CancelButtonClicked(this, EventArgs.Empty);
+            CancelButtonClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void SearchDialog_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LanguageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
-            {
-                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
-
             cancelButton.Text = _lp.CancelButtonText;
             headerLabel.Text = _lp.UpdateSearchDialogHeader;
 
             Text = Application.ProductName;
-            Icon = _appIcon;
+            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture);
         }
 
         private void cancelButton_Click(object sender, EventArgs e)

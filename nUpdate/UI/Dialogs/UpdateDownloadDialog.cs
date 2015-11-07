@@ -2,8 +2,6 @@
 
 using System;
 using System.Drawing;
-using System.IO;
-using System.Reflection;
 using System.Windows.Forms;
 using nUpdate.Localization;
 using nUpdate.UI.Popups;
@@ -13,7 +11,6 @@ namespace nUpdate.UI.Dialogs
 {
     public partial class UpdateDownloadDialog : BaseDialog
     {
-        private readonly Icon _appIcon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         private LocalizationProperties _lp;
 
         public UpdateDownloadDialog()
@@ -72,29 +69,7 @@ namespace nUpdate.UI.Dialogs
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(LanguageFilePath))
-            {
-                try
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(File.ReadAllText(LanguageFilePath));
-                }
-                catch (Exception)
-                {
-                    _lp = new LocalizationProperties();
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName != "en")
-            {
-                string resourceName = $"nUpdate.Localization.{LanguageName}.json";
-                using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
-                {
-                    _lp = Serializer.Deserialize<LocalizationProperties>(stream);
-                }
-            }
-            else if (string.IsNullOrEmpty(LanguageFilePath) && LanguageName == "en")
-            {
-                _lp = new LocalizationProperties();
-            }
+            _lp = LocalizationHelper.GetLocalizationProperties(InteractionUpdater.LanguageCulture);
 
             headerLabel.Text = _lp.UpdateDownloadDialogLoadingHeader;
             infoLabel.Text = string.Format(
@@ -102,7 +77,7 @@ namespace nUpdate.UI.Dialogs
             cancelButton.Text = _lp.CancelButtonText;
 
             Text = Application.ProductName;
-            Icon = _appIcon;
+            Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath);
         }
 
         public void ShowModalDialog(object dialogResultReference)

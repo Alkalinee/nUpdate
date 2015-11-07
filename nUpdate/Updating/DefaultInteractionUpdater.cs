@@ -1,11 +1,8 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -57,32 +54,16 @@ namespace nUpdate.Updating
             if (_isTaskRunning)
                 return;
 
-            string languageFilePath = null;
-            if (CultureFilePaths.ContainsKey(LanguageCulture))
-            {
-                CultureFilePaths.TryGetValue(LanguageCulture, out languageFilePath);
-            }
-
             _isTaskRunning = true;
-            var searchDialog = new UpdateSearchDialog { LanguageName = LanguageCulture.Name, LanguageFilePath = languageFilePath };
+            var searchDialog = new UpdateSearchDialog { InteractionUpdater = this };
             searchDialog.CancelButtonClicked += UpdateSearchDialogCancelButtonClick;
 
-            var newUpdateDialog = new NewUpdateDialog
-            {
-                LanguageName = LanguageCulture.Name,
-                LanguageFilePath = languageFilePath,
-                CurrentVersion = CurrentVersion,
-            };
-
-            var noUpdateDialog = new NoUpdateFoundDialog { LanguageName = LanguageCulture.Name, LanguageFilePath = languageFilePath };
+            var newUpdateDialog = new NewUpdateDialog {InteractionUpdater = this};
+            var noUpdateDialog = new NoUpdateFoundDialog { InteractionUpdater = this };
 
             // ReSharper disable once UnusedVariable
             var progressIndicator = new Progress<UpdateDownloadProgressChangedEventArgs>();
-            var downloadDialog = new UpdateDownloadDialog
-            {
-                LanguageName = LanguageCulture.Name,
-                LanguageFilePath = languageFilePath,
-            };
+            var downloadDialog = new UpdateDownloadDialog {InteractionUpdater = this};
             downloadDialog.CancelButtonClicked += UpdateDownloadDialogCancelButtonClick;
 
 #if PROVIDE_TAP
@@ -230,9 +211,6 @@ namespace nUpdate.Updating
 
                     if (_updatesAvailable)
                     {
-                        newUpdateDialog.PackageSize = TotalSize;
-                        newUpdateDialog.PackageConfigurations = PackageConfigurations;
-
                         var newUpdateDialogResultReference = new DialogResultReference();
                         Context.Send(newUpdateDialog.ShowModalDialog, newUpdateDialogResultReference);
                         if (newUpdateDialogResultReference.DialogResult == DialogResult.Cancel)
