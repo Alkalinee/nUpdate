@@ -1192,13 +1192,13 @@ namespace nUpdate.Administration.UI.Dialogs
             {
                 case 0:
                     _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.OSVersion,
+                        RequirementType.OSVersion,
                         _osVersions[requiredOSComboBox.Text]);
                     break;
 
                 case 1:
                     _updateRequirement = new UpdateRequirement(
-                            UpdateRequirement.RequirementType.DotNetFramework,
+                            RequirementType.DotNetFramework,
                             Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", "")));
                     break;
                 default:
@@ -1212,7 +1212,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 requirementsListBox.Items.Add(_updateRequirement);
             }
 
-            if (_requirementEditMode == true)
+            if (_requirementEditMode)
             {
                 _requirementEditMode = false;
                 requiredFrameworkComboBox.SelectedIndex = 0;
@@ -1229,7 +1229,7 @@ namespace nUpdate.Administration.UI.Dialogs
             UpdateRequirement requirement = (UpdateRequirement)requirementsListBox.SelectedItem;
             
 
-            if(requirement.Type == UpdateRequirement.RequirementType.DotNetFramework)
+            if (requirement.Type == RequirementType.DotNetFramework)
             {
                 requirementsTypeComboBox.SelectedIndex = 1;
                 requiredFrameworkComboBox.SelectedIndex = requiredFrameworkComboBox.Items.IndexOf(".NET Framework " + requirement.Version.ToString(3));

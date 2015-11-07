@@ -77,6 +77,8 @@ namespace nUpdate.Administration.UI.Dialogs
         private readonly TreeNode _stopServiceNode = new TreeNode("Stop service", 6, 6) {Tag = "StopService"};
         private readonly TreeNode _terminateProcessNode = new TreeNode("Terminate process", 7, 7) {Tag = "StopProcess"};
         private readonly BindingList<string> _unsupportedVersionLiteralsBindingList = new BindingList<string>();
+        private readonly BindingList<UpdateRequirement> _updateRequirements = new BindingList<UpdateRequirement>();
+        private Dictionary<string, Version> _osVersions;
         private readonly Log _updateLog = new Log();
         private readonly ZipFile _zip = new ZipFile();
         private bool _allowCancel = true;
@@ -97,9 +99,6 @@ namespace nUpdate.Administration.UI.Dialogs
         private bool _publishUpdate;
         private string _updateConfigFile;
         private bool _uploadCancelled;
-
-        private List<UpdateRequirement> _updateRequirements;
-        private Dictionary<string, Version> _osVersions;
 
         public PackageAddDialog()
         {
@@ -210,6 +209,7 @@ namespace nUpdate.Administration.UI.Dialogs
             var devStages = Enum.GetValues(typeof (DevelopmentalStage));
             Array.Reverse(devStages);
             developmentalStageComboBox.DataSource = devStages;
+            requirementsListBox.DataSource = _updateRequirements;
             var cultureInfos = CultureInfo.GetCultures(CultureTypes.AllCultures).ToList();
             foreach (var info in cultureInfos)
             {
@@ -253,22 +253,22 @@ namespace nUpdate.Administration.UI.Dialogs
             generalTabPage.DoubleBuffer();
             changelogTabPage.DoubleBuffer();
             cancelToolTip.SetToolTip(cancelLabel, "Click here to cancel the package upload.");
-
-
-            _updateRequirements = new List<UpdateRequirement>();
+            
             requiredOSComboBox.SelectedIndex = 0;
             requiredFrameworkComboBox.SelectedIndex = 0;
             requirementsTypeComboBox.SelectedIndex = 0;
 
-            _osVersions = new Dictionary<string, Version>();
-            _osVersions.Add("Windows Vista", new Version("6.0.6000.0"));
-            _osVersions.Add("Windows Vista Service Pack 1", new Version("6.0.6001.0"));
-            _osVersions.Add("Windows Vista Service Pack 2", new Version("6.0.6002.0"));
-            _osVersions.Add("Windows 7", new Version("6.1.7600.0"));
-            _osVersions.Add("Windows 7 Service Pack 1", new Version("6.1.7601.0"));
-            _osVersions.Add("Windows 8", new Version("6.2.9200.0"));
-            _osVersions.Add("Windows 8.1", new Version("6.3.9600.0"));
-            _osVersions.Add("Windows 10", new Version("10.0.10240.0"));
+            _osVersions = new Dictionary<string, Version>
+            {
+                {"Windows Vista", new Version("6.0.6000.0")},
+                {"Windows Vista Service Pack 1", new Version("6.0.6001.0")},
+                {"Windows Vista Service Pack 2", new Version("6.0.6002.0")},
+                {"Windows 7", new Version("6.1.7600.0")},
+                {"Windows 7 Service Pack 1", new Version("6.1.7601.0")},
+                {"Windows 8", new Version("6.2.9200.0")},
+                {"Windows 8.1", new Version("6.3.9600.0")},
+                {"Windows 10", new Version("10.0.10240.0")}
+            };
         }
 
         private void PackageAddDialog_FormClosing(object sender, FormClosingEventArgs e)
@@ -350,6 +350,7 @@ namespace nUpdate.Administration.UI.Dialogs
             }
 
             SetUIState(false);
+
 
             loadingPanel.Location = new Point(180, 91);
             loadingPanel.BringToFront();
@@ -623,7 +624,7 @@ namespace nUpdate.Administration.UI.Dialogs
                 _configuration.Changelog = changelog;
                 _configuration.NecessaryUpdate = _necessaryUpdate;
                 _configuration.Architecture = (Architecture) _architectureIndex;
-                _configuration.UpdateRequirements = _updateRequirements;
+                _configuration.UpdateRequirements = _updateRequirements.ToList();
 
                 _configuration.Operations = new List<Operation>();
                 Invoke(new Action(() =>
@@ -1590,29 +1591,22 @@ namespace nUpdate.Administration.UI.Dialogs
 
         private void addRequirementButton_Click(object sender, EventArgs e)
         {
-            UpdateRequirement _updateRequirement = null;
+            UpdateRequirement updateRequirement = null;
             switch (requirementsTypeComboBox.SelectedIndex)
             {
                 case 0:
-                    _updateRequirement = new UpdateRequirement(
-                        UpdateRequirement.RequirementType.OSVersion,
+                    updateRequirement = new UpdateRequirement(
+                        RequirementType.OSVersion,
                         _osVersions[requiredOSComboBox.Text]);
                     break;
 
                 case 1:
-                    _updateRequirement = new UpdateRequirement(
-                            UpdateRequirement.RequirementType.DotNetFramework,
-                            Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", "")));
-                    break;
-                default:
-                    _updateRequirement = null;
+                    updateRequirement = new UpdateRequirement(
+                            RequirementType.DotNetFramework,
+                            Version.Parse(requiredFrameworkComboBox.Text.Replace(".NET Framework ", string.Empty)));
                     break;
             }
-            if (_updateRequirement != null)
-            {
-                _updateRequirements.Add(_updateRequirement);
-                requirementsListBox.Items.Add(_updateRequirement);
-            }
+            _updateRequirements.Add(updateRequirement);
         }
 
         #region "Localization"

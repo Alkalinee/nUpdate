@@ -189,6 +189,7 @@
             this.requiredFrameworkComboBox = new System.Windows.Forms.ComboBox();
             this.requirementsListBox = new System.Windows.Forms.ListBox();
             this.categoryTreeView = new nUpdate.Administration.UI.Controls.ExplorerTreeView();
+            this.removeRequirementButton = new System.Windows.Forms.Button();
             this.loadingPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.controlPanel1.SuspendLayout();
@@ -1277,6 +1278,7 @@
             // 
             // requirementsTabPage
             // 
+            this.requirementsTabPage.Controls.Add(this.removeRequirementButton);
             this.requirementsTabPage.Controls.Add(this.requirementTypeLabel);
             this.requirementsTabPage.Controls.Add(this.addRequirementButton);
             this.requirementsTabPage.Controls.Add(this.requirementsTypeComboBox);
@@ -1294,13 +1296,13 @@
             this.requirementTypeLabel.AutoSize = true;
             this.requirementTypeLabel.Location = new System.Drawing.Point(5, 6);
             this.requirementTypeLabel.Name = "requirementTypeLabel";
-            this.requirementTypeLabel.Size = new System.Drawing.Size(135, 13);
+            this.requirementTypeLabel.Size = new System.Drawing.Size(32, 13);
             this.requirementTypeLabel.TabIndex = 3;
-            this.requirementTypeLabel.Text = "Type of the Requirement:";
+            this.requirementTypeLabel.Text = "Type:";
             // 
             // addRequirementButton
             // 
-            this.addRequirementButton.Location = new System.Drawing.Point(167, 114);
+            this.addRequirementButton.Location = new System.Drawing.Point(207, 109);
             this.addRequirementButton.Name = "addRequirementButton";
             this.addRequirementButton.Size = new System.Drawing.Size(121, 25);
             this.addRequirementButton.TabIndex = 2;
@@ -1328,7 +1330,7 @@
             this.requirementsTypeTabControl.Location = new System.Drawing.Point(0, 25);
             this.requirementsTypeTabControl.Name = "requirementsTypeTabControl";
             this.requirementsTypeTabControl.SelectedIndex = 0;
-            this.requirementsTypeTabControl.Size = new System.Drawing.Size(459, 109);
+            this.requirementsTypeTabControl.Size = new System.Drawing.Size(459, 60);
             this.requirementsTypeTabControl.TabIndex = 1;
             // 
             // osRequirementsTabPage
@@ -1338,7 +1340,7 @@
             this.osRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
             this.osRequirementsTabPage.Name = "osRequirementsTabPage";
             this.osRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.osRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.osRequirementsTabPage.Size = new System.Drawing.Size(451, 34);
             this.osRequirementsTabPage.TabIndex = 0;
             this.osRequirementsTabPage.Text = "OS";
             this.osRequirementsTabPage.UseVisualStyleBackColor = true;
@@ -1348,9 +1350,9 @@
             this.minimumOSVersionLabel.AutoSize = true;
             this.minimumOSVersionLabel.Location = new System.Drawing.Point(6, 9);
             this.minimumOSVersionLabel.Name = "minimumOSVersionLabel";
-            this.minimumOSVersionLabel.Size = new System.Drawing.Size(117, 13);
+            this.minimumOSVersionLabel.Size = new System.Drawing.Size(140, 13);
             this.minimumOSVersionLabel.TabIndex = 4;
-            this.minimumOSVersionLabel.Text = "Minimum OS Version:";
+            this.minimumOSVersionLabel.Text = "Operating system version:";
             // 
             // requiredOSComboBox
             // 
@@ -1365,7 +1367,7 @@
             "Windows 8",
             "Windows 8.1",
             "Windows 10"});
-            this.requiredOSComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredOSComboBox.Location = new System.Drawing.Point(163, 6);
             this.requiredOSComboBox.Name = "requiredOSComboBox";
             this.requiredOSComboBox.Size = new System.Drawing.Size(174, 21);
             this.requiredOSComboBox.TabIndex = 3;
@@ -1377,7 +1379,7 @@
             this.netRequirementsTabPage.Location = new System.Drawing.Point(4, 22);
             this.netRequirementsTabPage.Name = "netRequirementsTabPage";
             this.netRequirementsTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this.netRequirementsTabPage.Size = new System.Drawing.Size(451, 83);
+            this.netRequirementsTabPage.Size = new System.Drawing.Size(451, 34);
             this.netRequirementsTabPage.TabIndex = 1;
             this.netRequirementsTabPage.Text = ".NET";
             this.netRequirementsTabPage.UseVisualStyleBackColor = true;
@@ -1385,11 +1387,11 @@
             // minimumFrameworkVersionLabel
             // 
             this.minimumFrameworkVersionLabel.AutoSize = true;
-            this.minimumFrameworkVersionLabel.Location = new System.Drawing.Point(3, 4);
+            this.minimumFrameworkVersionLabel.Location = new System.Drawing.Point(3, 7);
             this.minimumFrameworkVersionLabel.Name = "minimumFrameworkVersionLabel";
-            this.minimumFrameworkVersionLabel.Size = new System.Drawing.Size(143, 26);
+            this.minimumFrameworkVersionLabel.Size = new System.Drawing.Size(139, 13);
             this.minimumFrameworkVersionLabel.TabIndex = 5;
-            this.minimumFrameworkVersionLabel.Text = "Minimum .NET Framework \r\nVersion: ";
+            this.minimumFrameworkVersionLabel.Text = " .NET Framework Version: ";
             // 
             // requiredFrameworkComboBox
             // 
@@ -1405,7 +1407,7 @@
             ".NET Framework 4.5.1",
             ".NET Framework 4.5.2",
             ".NET Framework 4.6.0"});
-            this.requiredFrameworkComboBox.Location = new System.Drawing.Point(167, 6);
+            this.requiredFrameworkComboBox.Location = new System.Drawing.Point(163, 4);
             this.requiredFrameworkComboBox.Name = "requiredFrameworkComboBox";
             this.requiredFrameworkComboBox.Size = new System.Drawing.Size(176, 21);
             this.requiredFrameworkComboBox.TabIndex = 4;
@@ -1415,7 +1417,7 @@
             this.requirementsListBox.FormattingEnabled = true;
             this.requirementsListBox.Location = new System.Drawing.Point(5, 140);
             this.requirementsListBox.Name = "requirementsListBox";
-            this.requirementsListBox.Size = new System.Drawing.Size(460, 82);
+            this.requirementsListBox.Size = new System.Drawing.Size(450, 82);
             this.requirementsListBox.TabIndex = 0;
             // 
             // categoryTreeView
@@ -1465,6 +1467,15 @@
             this.categoryTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragDrop);
             this.categoryTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.categoryTreeView_DragEnter);
             this.categoryTreeView.KeyDown += new System.Windows.Forms.KeyEventHandler(this.categoryTreeView_KeyDown);
+            // 
+            // removeRequirementButton
+            // 
+            this.removeRequirementButton.Location = new System.Drawing.Point(334, 109);
+            this.removeRequirementButton.Name = "removeRequirementButton";
+            this.removeRequirementButton.Size = new System.Drawing.Size(121, 25);
+            this.removeRequirementButton.TabIndex = 4;
+            this.removeRequirementButton.Text = "Remove requirement";
+            this.removeRequirementButton.UseVisualStyleBackColor = true;
             // 
             // PackageAddDialog
             // 
@@ -1649,5 +1660,6 @@
         private System.Windows.Forms.Label minimumFrameworkVersionLabel;
         private System.Windows.Forms.ComboBox requiredFrameworkComboBox;
         private System.Windows.Forms.ListBox requirementsListBox;
+        private System.Windows.Forms.Button removeRequirementButton;
     }
 }

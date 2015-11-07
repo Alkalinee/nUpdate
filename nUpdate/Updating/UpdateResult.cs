@@ -9,9 +9,7 @@ namespace nUpdate.Updating
     internal class UpdateResult
     {
         private readonly List<UpdateConfiguration> _newUpdateConfigurations = new List<UpdateConfiguration>();
-        private readonly bool _updatesFound;
         private UpdateConfiguration _newestConfiguration;
-        private Dictionary<UpdateVersion, List<UpdateRequirement>> _requirements = new Dictionary<UpdateVersion, List<UpdateRequirement>>();
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateResult" /> class.
@@ -56,49 +54,42 @@ namespace nUpdate.Updating
                     if (new UpdateVersion(config.LiteralVersion) <= currentVersion)
                         continue;
 
-                    bool requirementMatch = true;
-                    string message = "";
-                    Tuple<bool, string> requirementResult;
-
-                    if (config.UpdateRequirements != null)
+                    if (config.UpdateRequirements != null &&
+                        config.UpdateRequirements.Any(req => !req.CheckRequirement()))
                     {
-                        foreach (var updateRequirement in config.UpdateRequirements)
-                        {
-                            requirementResult = updateRequirement.CheckRequirement();
-                            if (!requirementResult.Item1)
-                            {
-                                requirementMatch = false;
-                                _requirements.Add(new UpdateVersion(config.LiteralVersion), config.UpdateRequirements);
-                            }
-                        }
+                        UnfulFilledRequirements.Add(new UpdateVersion(config.LiteralVersion),
+                            config.UpdateRequirements.Where(req => !req.CheckRequirement()).ToList());
+                        continue;
                     }
 
-                    if (requirementMatch)
-                        _newUpdateConfigurations.Add(config);
+                    _newUpdateConfigurations.Add(config);
                 }
 
                 var highestVersion =
                     UpdateVersion.GetHighestUpdateVersion(
                         _newUpdateConfigurations.Select(item => new UpdateVersion(item.LiteralVersion)));
-                _newUpdateConfigurations.RemoveAll(
-                    item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate);
+                var ignoredVersions = _newUpdateConfigurations.Where(
+                    item => new UpdateVersion(item.LiteralVersion) < highestVersion && !item.NecessaryUpdate).Select(item => new UpdateVersion(item.LiteralVersion));
+                foreach (var ignoredVersion in ignoredVersions)
+                {
+                    _newUpdateConfigurations.Remove(
+                        _newUpdateConfigurations.First(item => new UpdateVersion(item.LiteralVersion) == ignoredVersion));
+                    UnfulFilledRequirements.Remove(ignoredVersion);
+                }
             }
 
-            _updatesFound = _newUpdateConfigurations.Count != 0;
+            UpdatesFound = _newUpdateConfigurations.Count > 0;
         }
 
         /// <summary>
         ///     Gets a value indicating whether updates were found, or not.
         /// </summary>
-        public bool UpdatesFound => _updatesFound;
+        public bool UpdatesFound { get; }
 
         /// <summary>
-        ///     Gets the requirements of the update package, that are not given on the computer
+        ///     Gets the <see cref="UpdateRequirement"/>s of their relating <see cref="UpdateVersion"/> that have not been fulfilled.
         /// </summary>
-        public Dictionary<UpdateVersion, List<UpdateRequirement>> Requirements
-        {
-            get { return _requirements; }
-        }
+        public Dictionary<UpdateVersion, List<UpdateRequirement>> UnfulFilledRequirements { get; } = new Dictionary<UpdateVersion, List<UpdateRequirement>>();
 
         /// <summary>
         ///     Returns all new configurations.
