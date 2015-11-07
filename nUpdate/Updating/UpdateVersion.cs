@@ -412,7 +412,7 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Retuns the highest version in the given collection.
+        ///     Returns the highest version in the given collection.
         /// </summary>
         /// <param name="updateVersions">The collection of versions to check.</param>
         /// <returns>Returns the highest version found.</returns>
@@ -431,7 +431,7 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Retuns the lowest version in the given collection.
+        ///     Returns the lowest version in the given collection.
         /// </summary>
         /// <param name="updateVersions">The collection of versions to check.</param>
         /// <returns>Returns the lowest version found.</returns>
