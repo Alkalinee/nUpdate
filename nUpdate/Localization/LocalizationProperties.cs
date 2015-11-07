@@ -32,11 +32,7 @@ namespace nUpdate.Localization
             UpdateDownloadDialogLoadingHeader = "Downloading updates...";
             UpdateDownloadDialogLoadingInfo = "Please wait while the available updates are\ndownloaded...  ({0}%)";
 
-            MissingRequirementDialogHeader = "Requirements missing.";
-            MissingRequirementDialogInfoText = "Some requirement are missing on your computer.";
-
             // Put the strings into \" because they are handled over as process arguments (Installer)
-
             InstallerExtractingFilesText = "\"Extracting files...\"";
             InstallerCopyingText = "\"Copying {0}...\"";
             InstallerInitializingErrorCaption = "\"Error while iniaitializing the data.\"";
@@ -54,6 +50,12 @@ namespace nUpdate.Localization
             ServiceStopOperationText = "\"Stopping service \"{0}\"...\"";
 
             UpdateSearchErrorCaption = "Error while searching for updates.";
+            UnfulfilledRequirementErrorCaption = "Missing requirements.";
+            UnfulfilledRequirementErrorText =
+                "The installation of some updates can't be completed because the following requirements are unfulfilled:";
+            OperatingSystemText = "Operating system:";
+            DotNetFrameworkText = ".NET Framework:";
+            RequiredVersionText = "Required version:";
             PackageValidityCheckErrorCaption = "Error while checking the package's signature.";
             PackageNotFoundErrorText = "The package file couldn't be found.";
             InvalidSignatureErrorCaption = "Invalid signature data found.";
@@ -98,9 +100,6 @@ namespace nUpdate.Localization
         public string UpdateDownloadDialogLoadingHeader { get; set; }
         public string UpdateDownloadDialogLoadingInfo { get; set; }
 
-        public string MissingRequirementDialogHeader { get; set;}
-        public string MissingRequirementDialogInfoText { get; set; }
-
         public string InstallerExtractingFilesText { get; set; }
         public string InstallerCopyingText { get; set; }
         public string InstallerInitializingErrorCaption { get; set; }
@@ -118,6 +117,11 @@ namespace nUpdate.Localization
         public string ServiceStopOperationText { get; set; }
 
         public string UpdateSearchErrorCaption { get; set; }
+        public string UnfulfilledRequirementErrorCaption { get; set; }
+        public string UnfulfilledRequirementErrorText { get; set; }
+        public string OperatingSystemText { get; set; }
+        public string DotNetFrameworkText { get; set; }
+        public string RequiredVersionText { get; set; }
         public string PackageValidityCheckErrorCaption { get; set; }
         public string PackageNotFoundErrorText { get; set; }
         public string InvalidSignatureErrorCaption { get; set; }

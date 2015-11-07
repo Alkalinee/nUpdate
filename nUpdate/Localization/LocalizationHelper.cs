@@ -1,9 +1,11 @@
 ﻿// Author: Dominic Beger (Trade/ProgTrade)
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace nUpdate.Localization
 {
@@ -22,7 +24,7 @@ namespace nUpdate.Localization
             {
                 var fieldInfo = o.GetType().GetField(o.ToString());
                 var descriptionAttributes =
-                    (DescriptionAttribute[]) fieldInfo.GetCustomAttributes(typeof (DescriptionAttribute), false);
+                    (DescriptionAttribute[])fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false);
 
                 if (descriptionAttributes.Length > 0)
                 {
@@ -38,6 +40,22 @@ namespace nUpdate.Localization
                 {
                     yield return o.ToString();
                 }
+            }
+        }
+
+        public static CultureInfo[] IntegratedCultures => new[] { new CultureInfo("de-AT"), new CultureInfo("de-CH"), new CultureInfo("de-DE"), new CultureInfo("en"), new CultureInfo("fr-FR") };
+
+        public static bool IsIntegratedCulture(CultureInfo cultureInfo)
+        {
+            return IntegratedCultures.Contains(cultureInfo);
+        }
+
+        public LocalizationProperties GetLocaizationProperties(CultureInfo cultureInfo)
+        {
+            string resourceName = $"nUpdate.Localization.{cultureInfo.Name}.json";
+            using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
+            {
+                return Serializer.Deserialize<LocalizationProperties>(stream);
             }
         }
     }

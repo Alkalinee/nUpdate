@@ -70,7 +70,7 @@ namespace nUpdate.Updating
         public bool NecessaryUpdate { get; set; }
 
         /// <summary>
-        ///     Gets or sets the requirements to install the update package
+        ///     Gets or sets the requirements that must be fullfilled in order to install the update package.
         /// </summary>
         public List<UpdateRequirement> UpdateRequirements { get; set; }
 
