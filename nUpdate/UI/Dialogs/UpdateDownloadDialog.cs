@@ -67,8 +67,7 @@ namespace nUpdate.UI.Dialogs
 
         protected virtual void OnCancelButtonClicked()
         {
-            if (CancelButtonClicked != null)
-                CancelButtonClicked(this, EventArgs.Empty);
+            CancelButtonClicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void UpdateDownloadDialog_Load(object sender, EventArgs e)
