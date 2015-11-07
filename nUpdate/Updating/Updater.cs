@@ -24,7 +24,7 @@ namespace nUpdate.Updating
     /// <summary>
     ///     Provides functionality to update .NET-applications.
     /// </summary>
-    public class UpdateManager : IDisposable
+    public class Updater : IDisposable
     {
         private bool _closeHostApplication = true;
         private bool _includeCurrentPcIntoStatistics = true;
@@ -38,9 +38,9 @@ namespace nUpdate.Updating
         private bool _hasDownloadFailed;
         private IEnumerable<UpdateConfiguration> _updateConfigurations;
         private readonly Dictionary<UpdateVersion, string> _packageFilePaths = new Dictionary<UpdateVersion, string>();
-
         private readonly Dictionary<UpdateVersion, IEnumerable<Operation>> _packageOperations =
             new Dictionary<UpdateVersion, IEnumerable<Operation>>();
+        private Dictionary<UpdateVersion, List<UpdateRequirement>> _unfulfilledRequirements = new Dictionary<UpdateVersion, List<UpdateRequirement>>(); 
 
         private readonly string _applicationUpdateDirectory = Path.Combine(Path.GetTempPath(), "nUpdate",
             Application.ProductName);
@@ -48,7 +48,7 @@ namespace nUpdate.Updating
         private LocalizationProperties _lp;
 
         /// <summary>
-        ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
+        ///     Initializes a new instance of the <see cref="Updater" /> class.
         /// </summary>
         /// <param name="updateConfigurationFileUri">The <see cref="Uri"/> of the update configuration.</param>
         /// <param name="publicKey">The public key for the validity check of the update packages.</param>
@@ -56,7 +56,7 @@ namespace nUpdate.Updating
         ///     The public key can be found in the overview of your project when you're opening it in nUpdate Administration.
         ///     If you have problems inserting the data (or if you want to save time) you can scroll down and follow the steps of "Copy data" which will automatically generate the necessary code for you.
         /// </remarks>
-        public UpdateManager(Uri updateConfigurationFileUri, string publicKey)
+        public Updater(Uri updateConfigurationFileUri, string publicKey)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException(nameof(updateConfigurationFileUri));
@@ -81,9 +81,9 @@ namespace nUpdate.Updating
         }
 
         /// <summary>
-        ///     Finalizes an instance of the <see cref="UpdateManager" /> class.
+        ///     Finalizes an instance of the <see cref="Updater" /> class.
         /// </summary>
-        ~UpdateManager()
+        ~Updater()
         {
             Dispose(true);
         }
@@ -198,7 +198,7 @@ namespace nUpdate.Updating
         public List<UpdateArgument> Arguments { get; set; } = new List<UpdateArgument>();
 
         /// <summary>
-        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
+        ///     Releases all managed and unmanaged resources used by the current <see cref="Updater" />-instance.
         /// </summary>
         public void Dispose()
         {
@@ -265,13 +265,9 @@ namespace nUpdate.Updating
             var result = new UpdateResult(configuration, CurrentVersion,
                 IncludeAlpha, IncludeBeta);
 
-            if (result.Requirements.Count != 0)
-                OnMissingRequirement(new MissingRequirementsEventArgs(result.Requirements));
-
+            _unfulfilledRequirements = result.UnfulFilledRequirements;
             if (!result.UpdatesFound)
                 return false;
-
-          
 
             _updateConfigurations = result.NewestConfigurations;
             double updatePackageSize = 0;
@@ -850,11 +846,6 @@ namespace nUpdate.Updating
         public event EventHandler<FailedEventArgs> StatisticsEntryFailed;
 
         /// <summary>
-        ///     Occurs when some requirements are missing
-        /// </summary>
-        public event EventHandler<MissingRequirementsEventArgs> MissingRequirement;
-
-        /// <summary>
         ///     Called when the update search is started.
         /// </summary>
         /// <param name="sender">The sender.</param>
@@ -870,7 +861,7 @@ namespace nUpdate.Updating
         /// <param name="updateAvailable">if set to <c>true</c> updates are available.</param>
         protected virtual void OnUpdateSearchFinished(bool updateAvailable)
         {
-            UpdateSearchFinished?.Invoke(this, new UpdateSearchFinishedEventArgs(updateAvailable));
+            UpdateSearchFinished?.Invoke(this, new UpdateSearchFinishedEventArgs(updateAvailable, _unfulfilledRequirements));
         }
 
         /// <summary>
@@ -931,16 +922,6 @@ namespace nUpdate.Updating
         protected virtual void OnStatisticsEntryFailed(Exception exception)
         {
             StatisticsEntryFailed?.Invoke(this, new FailedEventArgs(exception));
-        }
-
-        /// <summary>
-        ///     Called when some requirements are missing
-        /// </summary>
-        /// <param name="exception">The exception that occured.</param>
-        protected virtual void OnMissingRequirement(MissingRequirementsEventArgs requirements)
-        {
-            if (MissingRequirement != null)
-                MissingRequirement(this, new MissingRequirementsEventArgs(requirements.Requirements));
         }
     }
 }

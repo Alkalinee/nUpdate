@@ -195,7 +195,7 @@ namespace nUpdate.Administration.Application
         }
 
         /// <summary>
-        ///     Releases all managed and unmanaged resources used by the current <see cref="UpdateManager" />-instance.
+        ///     Releases all managed and unmanaged resources used by the current <see cref="Updater" />-instance.
         /// </summary>
         public void Dispose()
         {
