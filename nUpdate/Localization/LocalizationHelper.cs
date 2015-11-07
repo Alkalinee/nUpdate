@@ -50,7 +50,7 @@ namespace nUpdate.Localization
             return IntegratedCultures.Contains(cultureInfo);
         }
 
-        public LocalizationProperties GetLocaizationProperties(CultureInfo cultureInfo)
+        public static LocalizationProperties GetLocalizationProperties(CultureInfo cultureInfo)
         {
             string resourceName = $"nUpdate.Localization.{cultureInfo.Name}.json";
             using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
