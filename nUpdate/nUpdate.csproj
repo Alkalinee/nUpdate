@@ -93,6 +93,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Architecture.cs" />
+    <Compile Include="SizeHelper.cs" />
     <Compile Include="UI\Dialogs\MissingUpdateRequirementsDialog.cs">
       <SubType>Form</SubType>
     </Compile>
