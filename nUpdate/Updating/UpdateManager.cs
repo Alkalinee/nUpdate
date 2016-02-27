@@ -48,6 +48,10 @@ namespace nUpdate.Updating
             Application.ProductName);
 
         private LocalizationProperties _lp;
+        private readonly ConfigurationUpdateCallback _configurationUpdateCallback;
+
+        public delegate IEnumerable<UpdateConfiguration> ConfigurationUpdateCallback(
+            IEnumerable<UpdateConfiguration> updateConfigurations);
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="UpdateManager" /> class.
@@ -61,7 +65,7 @@ namespace nUpdate.Updating
         ///     steps of the category "Copy data" which will automatically generate the necessray code for you.
         /// </remarks>
         public UpdateManager(Uri updateConfigurationFileUri, string publicKey,
-            CultureInfo languageCulture)
+            CultureInfo languageCulture, ConfigurationUpdateCallback configurationUpdateAction)
         {
             if (updateConfigurationFileUri == null)
                 throw new ArgumentNullException("updateConfigurationFileUri");
@@ -77,6 +81,7 @@ namespace nUpdate.Updating
 
             CultureFilePaths = new Dictionary<CultureInfo, string>();
             Arguments = new List<UpdateArgument>();
+            _configurationUpdateCallback = configurationUpdateAction;
 
             var projectAssembly = Assembly.GetCallingAssembly();
             var nUpateVersionAttribute =
@@ -285,7 +290,8 @@ namespace nUpdate.Updating
             if (!result.UpdatesFound)
                 return false;
 
-            _updateConfigurations = result.NewestConfigurations;
+
+            _updateConfigurations = _configurationUpdateCallback == null ? result.NewestConfigurations : _configurationUpdateCallback.Invoke(result.NewestConfigurations);
             double updatePackageSize = 0;
             foreach (var updateConfiguration in _updateConfigurations)
             {

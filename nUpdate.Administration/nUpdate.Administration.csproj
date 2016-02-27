@@ -79,9 +79,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\MySql.Data.6.9.6\lib\net40\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=8.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.8.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="nUpdate.Administration.TransferInterface">
       <HintPath>..\nUpdate.Administration.TransferInterface\bin\Debug\nUpdate.Administration.TransferInterface.dll</HintPath>
@@ -258,9 +258,7 @@
     <Compile Include="UI\Controls\ButtonTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="UI\Controls\ExpandButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="UI\Controls\ExpandButton.cs" />
     <Compile Include="UI\Controls\ExplorerListViewGroup.cs" />
     <Compile Include="Core\Win32\NativeMethods.cs" />
     <Compile Include="Core\Win32\PaintStruct.cs" />
