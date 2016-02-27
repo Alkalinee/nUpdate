@@ -1,4 +1,5 @@
 ﻿using System;
+using nUpdate.Updating;
 
 namespace nUpdate.UpdateEventArgs
 {
@@ -13,13 +14,18 @@ namespace nUpdate.UpdateEventArgs
         /// <param name="bytesReceived">The amount of bytes received.</param>
         /// <param name="totalBytesToReceive">The total bytes to receive.</param>
         /// <param name="percentage">The progress percentage.</param>
-        internal UpdateDownloadProgressChangedEventArgs(long bytesReceived, long totalBytesToReceive, float percentage)
+        internal UpdateDownloadProgressChangedEventArgs(long bytesReceived, long totalBytesToReceive, float percentage, double downloadSpeed)
         {
             TotalBytesToReceive = totalBytesToReceive;
             BytesReceived = bytesReceived;
             Percentage = percentage;
+            DownloadSpeed = downloadSpeed;
         }
 
+        /// <summary>
+        /// Gets the current download speed in bytes / seconds
+        /// </summary>
+        public double DownloadSpeed { get; private set; }
         /// <summary>
         ///     Gets the total bytes to receive.
         /// </summary>

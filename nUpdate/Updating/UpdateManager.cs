@@ -20,6 +20,7 @@ using nUpdate.Properties;
 using nUpdate.UpdateEventArgs;
 using SystemInformation = nUpdate.Core.SystemInformation;
 using System.Diagnostics;
+using nUpdate.Extensions;
 
 namespace nUpdate.Updating
 {
@@ -396,7 +397,8 @@ namespace nUpdate.Updating
                     var webRequest = WebRequest.Create(updateConfiguration.UpdatePackageUri);
                     using (webResponse = webRequest.GetResponse())
                     {
-                        var buffer = new byte[1024];
+                        const int bufferSize = 16 * 1024;
+                        var buffer = new byte[bufferSize];
                         _packageFilePaths.Add(new UpdateVersion(updateConfiguration.LiteralVersion),
                             Path.Combine(_applicationUpdateDirectory,
                                 String.Format("{0}.zip", updateConfiguration.LiteralVersion)));
@@ -416,6 +418,11 @@ namespace nUpdate.Updating
                                     throw new OperationCanceledException();
                                 }
 
+
+                                DateTime lastUpdate = DateTime.Now;
+                                int dataDownloadedSinceLastUpdate = 0;
+                                double currentSpeed = 0;
+
                                 int size = input.Read(buffer, 0, buffer.Length);
                                 while (size > 0)
                                 {
@@ -431,8 +438,20 @@ namespace nUpdate.Updating
 
                                     fileStream.Write(buffer, 0, size);
                                     received += size;
+                                    dataDownloadedSinceLastUpdate += size;
+
+                                    if (DateTime.Now - lastUpdate > TimeSpan.FromMilliseconds(100) || currentSpeed == 0)
+                                    {
+                                        var period = DateTime.Now - lastUpdate;
+                                        currentSpeed = dataDownloadedSinceLastUpdate/period.TotalSeconds;
+
+                                        lastUpdate = DateTime.Now;
+                                        dataDownloadedSinceLastUpdate = 0;
+                                    }
+
                                     OnUpdateDownloadProgressChanged(received,
-                                        (long)total, (float)(received / total) * 100);
+                                        (long) total, (float) (received/total)*100, currentSpeed);
+
                                     size = input.Read(buffer, 0, buffer.Length);
                                 }
 
@@ -626,7 +645,8 @@ namespace nUpdate.Updating
                     throw new ArgumentException(String.Format("Signature of version \"{0}\" is null or empty.",
                         configuration));
 
-                FileStream stream = File.Open(filePathItem.Value, FileMode.Open);
+                var stream = FileExtensions.WaitForFile(filePathItem.Value, FileMode.Open, FileAccess.Read,
+                    FileShare.None);
                 try
                 {
                     RsaManager rsa;
@@ -678,12 +698,12 @@ namespace nUpdate.Updating
         ///     Terminates the application.
         /// </summary>
         /// <remarks>
-        ///     If your apllication doesn't terminate correctly or if you want to perform custom actions before terminating,
+        ///     If your aplication doesn't terminate correctly or if you want to perform custom actions before terminating,
         ///     then override this method and implement your own code.
         /// </remarks>
         public virtual void TerminateApplication()
         {
-            Application.Exit();
+            Environment.Exit(0);
         }
 
         /// <summary>
@@ -926,12 +946,13 @@ namespace nUpdate.Updating
         /// <param name="bytesReceived">The amount of bytes received.</param>
         /// <param name="totalBytesToReceive">The total bytes to receive.</param>
         /// <param name="percentage">The progress percentage.</param>
+        /// <param name="downloadSpeed">The download speed.</param>
         protected virtual void OnUpdateDownloadProgressChanged(long bytesReceived, long totalBytesToReceive,
-            float percentage)
+            float percentage, double downloadSpeed)
         {
             if (PackagesDownloadProgressChanged != null)
                 PackagesDownloadProgressChanged(this,
-                    new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage));
+                    new UpdateDownloadProgressChangedEventArgs(bytesReceived, totalBytesToReceive, percentage, downloadSpeed));
         }
 
         /// <summary>

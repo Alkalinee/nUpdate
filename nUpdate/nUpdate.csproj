@@ -111,6 +111,7 @@
     <Compile Include="Exceptions\PackageDeleteException.cs" />
     <Compile Include="Exceptions\SizeCalculationException.cs" />
     <Compile Include="Exceptions\StatisticsException.cs" />
+    <Compile Include="Extensions\FileExtensions.cs" />
     <Compile Include="UI\Dialogs\DialogResultReference.cs" />
     <Compile Include="UpdateEventArgs\FailedEventArgs.cs" />
     <Compile Include="UpdateEventArgs\UpdateDownloadProgressChangedEventArgs.cs" />
